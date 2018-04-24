@@ -1,0 +1,74 @@
+SHELL=/bin/sh
+PATH=/usr/local/lib/mh:$PATH
+MAILDIR=$HOME/Mail
+LOGFILE=$HOME/Mail/logfile
+SENDMAIL=/usr/sbin/sendmail
+#VERBOSE=1
+VERBOSE=0
+EOL="
+"
+LOG="$EOL$EOL$EOL"
+LOG="New message log:$EOL"
+LOG=`perl GET_MESSAGE_INDEX`
+LOG="$EOL"
+
+#Jiacheng Yuan
+#yuan105
+#HW12
+#4/17/2018
+
+
+## Recipe_1:
+##
+##This recipe will only be invoked if the mail contain multiple 
+##entries in the "From" header. This email will go into spamFolder
+##
+:0 :
+* ^From.*,
+spamFolder
+
+
+
+## Recipe_2:
+##
+## This recipe will only be invoked if the subject line
+## constains the string 'medication|diploma|Diploma|degree|
+##Degree|imphotgence|Inteveo|cheap|buy|Buy'. This email will go into
+##spamFolder
+##
+:0 :
+* ^Subject.*(medication|diploma|Diploma|degree|Degree|imphotgence|Inteveo|cheap|buy|Buy)
+spamFolder
+
+
+
+## Recipe_3:
+##
+## This recipe will only be invoked if the content contain $ sign with numbers 
+##or number with EUR. This email will go into spamFolder
+##
+:0 B :
+*($(?[0-9]*,?)*|EUR)
+spamFolder
+
+
+
+## Recipe_4:
+##
+##This recipe will only be invoked if the content 
+##contain pain text with html link.
+##This email will go into spamFolder
+##
+:0 HB :
+* ^Content-Type: text/plain
+* ^Content-Type: text/html
+* ^Content-Type: multipart/alternative
+spamFolder
+
+
+## Recipe_5:
+##
+##The rest of the email will go into the mailbox of the special account
+##
+:0 :
+/var/mail/ece404f9
